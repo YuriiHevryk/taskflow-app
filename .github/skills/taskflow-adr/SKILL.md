@@ -1,207 +1,145 @@
-
 ---
 name: taskflow-adr
-description: Documents approved architecture decisions for the TaskFlow application in the Obsidian knowledge base. Use when evaluating architecture choices, recording accepted decisions, or updating TaskFlow architecture documentation.
+description: "Create and document TaskFlow architecture decisions using Obsidian and MCP. Use when evaluating or recording architecture decisions."
 ---
 
 # TaskFlow Architecture Decision Record
 
 ## Purpose
 
-Document architecture decisions made during the development of TaskFlow.
+Document architecture decisions for the TaskFlow application.
 
-Each architecture decision must explain:
-- The problem being addressed.
-- The context of the decision.
-- The alternatives considered.
-- The selected solution.
-- The reasons for the choice.
-- The expected consequences.
+Each decision must include its context, alternatives, selected solution, rationale and consequences.
 
-Use the TaskFlow knowledge base and project guardrails.
-
-## Required project context
+## Required context
 
 Before preparing an ADR:
 
 1. Read docs/app-requirements.md.
 2. Read docs/harness-requirements.md.
 3. Read docs/guardrails.md.
-4. Read the relevant architecture documentation.
-5. Search the Obsidian knowledge base.
+4. Identify affected TaskFlow components.
+5. Search relevant notes using taskflow-vault MCP search_notes.
 
-Use the taskflow-vault MCP server when available.
+Search for related concepts, components and existing architecture decisions.
 
-Call search_notes with relevant queries, including:
-- SQLite
-- Task Repository
-- Task Service
-- Architecture
-- Decision
-
-Only use queries relevant to the actual task.
-
-If the decision concerns a GitHub change, use GitHub MCP to verify the relevant commit and affected files.
-
-If MCP is unavailable, report the limitation.
-
-Do not invent architecture decisions or implementation details.
+Do not invent information if MCP is unavailable.
 
 ## Procedure
 
 ### Step 1. Identify the decision
 
 Determine:
-- What problem requires a decision.
-- Which TaskFlow components are affected.
-- Whether a related decision already exists.
+- The problem requiring a decision.
+- The affected components.
+- Existing related decisions.
 - Whether the decision is proposed or approved.
 
-Do not record a proposal as an accepted decision.
+### Step 2. Analyze alternatives
 
-### Step 2. Analyze the context
+Compare at least two reasonable solutions when applicable.
 
-Review project requirements and relevant Obsidian notes.
+For each alternative describe advantages, disadvantages and risks.
 
-Identify existing constraints, dependencies and architecture conventions.
+### Step 3. Prepare ADR
 
-### Step 3. Compare alternatives
-
-Consider at least two reasonable alternatives when applicable.
-
-For each alternative, describe:
-- Advantages.
-- Disadvantages.
-- Compatibility with TaskFlow.
-- Relevant risks.
-
-### Step 4. Prepare the ADR
-
-Use the following structure:
+Use this structure:
 
 # Architecture Decision: Title
 
 ## Context
-
-Describe the problem and current conditions.
+Describe the problem and current architecture.
 
 ## Alternatives
-
-Describe the available solutions.
+Describe the considered solutions.
 
 ## Decision
-
 State the selected solution.
 
 ## Rationale
-
-Explain why this solution was selected.
+Explain the reasons for the choice.
 
 ## Consequences
-
-Describe expected positive and negative effects.
+Describe positive and negative effects.
 
 ## Related Components
-
-List related TaskFlow components using Obsidian wiki-links.
+List relevant Obsidian wiki-links.
 
 ## Verification
+List project files and notes consulted.
 
-State which requirements, project files or knowledge base notes were checked.
+### Step 4. Check guardrails
 
-### Step 5. Check guardrails
-
-Before creating or updating a note, read docs/guardrails.md.
+Read docs/guardrails.md before modifying the knowledge base.
 
 Relevant rules:
+- W-02: Obsidian writes require approval.
+- W-03: Git push requires approval.
+- B-02: deleting architecture decisions is prohibited.
+- B-03: deleting repositories is prohibited.
 
-- W-02: Obsidian writes require user approval.
-- W-03: Git push requires user approval.
-- B-02: Deleting architecture decisions is prohibited.
-- B-03: Recursive repository deletion is prohibited.
+Never delete an existing ADR.
 
-Never delete existing decision notes.
+### Step 5. Request approval
 
-Never overwrite a previous decision without explicit approval.
+Present the complete ADR draft to the user.
 
-If a new decision replaces an older one, preserve the old record and document the supersedes relationship.
+Do not write the note until the user explicitly approves the decision and its content.
 
-### Step 6. Request approval
+### Step 6. Save approved ADR
 
-Present the completed ADR draft to the user.
+Use taskflow-vault MCP ingest_note.
 
-Ask for explicit confirmation before writing to Obsidian and synchronizing Git.
-
-Do not treat a generated draft as user approval.
-
-### Step 7. Save the approved ADR
-
-Only after explicit user approval, call the taskflow-vault MCP tool ingest_note with:
-
-- title: short English title.
+Provide:
+- title: English decision title.
 - note_type: decision.
-- content: approved ADR content.
-- links: related existing note titles.
+- content: approved ADR text.
+- links: existing related note titles.
 - approved: true.
 
-The current ingest_note implementation creates accepted decision notes. Therefore, do not use it to save an unapproved proposal.
+The MCP server handles saving and Git synchronization.
 
-The MCP tool handles Git synchronization.
+Do not perform additional Git operations without authorization.
 
-Do not perform a separate Git push unless necessary and explicitly authorized.
+### Step 7. Verify
 
-### Step 8. Verify the result
-
-Check the tool response.
-
-Confirm:
-- The expected note path.
-- Successful creation or update.
-- Git synchronization status.
-- Whether manual intervention was required.
-
-Do not claim success without verification.
+Check:
+- Tool response.
+- Note creation status.
+- Resulting file path.
+- Git synchronization.
+- Any manual corrections required.
 
 ## Expected output
 
 # ADR Result
 
 ### Decision
-
-Title and short description.
+Title and description.
 
 ### Context Sources
-
-Project documents and Obsidian notes consulted.
+Documents and Obsidian notes consulted.
 
 ### Alternatives
-
-Solutions considered and their tradeoffs.
+Considered solutions.
 
 ### Selected Solution
-
-The approved decision and rationale.
+Approved choice and rationale.
 
 ### Guardrails
-
-Relevant rules and confirmation status.
+Relevant rules and approval status.
 
 ### Obsidian Result
-
-- File path.
-- Creation or update status.
-- Git synchronization result.
+Created file and synchronization status.
 
 ### Manual Intervention
-
-Describe any corrections or actions required from the user.
+Any required corrections.
 
 ## Restrictions
 
-- Do not invent project facts.
-- Do not save an unapproved architecture decision.
-- Do not delete historical ADR notes.
-- Do not perform force push.
+- Do not invent architecture facts.
+- Do not save unapproved decisions.
+- Do not delete previous decisions.
 - Do not modify application source code.
-- Do not bypass guardrails or user confirmations.
-- Report unavailable MCP tools or failed synchronization.
+- Do not perform force push.
+- Do not bypass guardrails.

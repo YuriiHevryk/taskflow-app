@@ -1,147 +1,105 @@
-
 ---
 name: taskflow-code-review
-description: Reviews Python code in the TaskFlow project for correctness, security, architecture consistency, and guardrail compliance. Use when reviewing MCP tools, Python modules, tests, or changes to the TaskFlow application.
+description: "Review TaskFlow Python code for correctness, security, architecture compliance and guardrails. Use when reviewing Python modules and MCP tools."
 ---
 
 # TaskFlow Code Review
 
 ## Purpose
 
-Review Python code in the TaskFlow project.
+Review Python source files in TaskFlow without modifying them.
 
-The review must consider:
-- Functional correctness.
-- Error handling.
-- Security and input validation.
-- Architecture consistency.
-- Existing project conventions.
-- TaskFlow guardrails.
-
-This skill performs analysis only. Do not modify files unless the user separately requests changes and approves them.
-
-## Required project context
+## Required context
 
 Before reviewing code:
 
 1. Read docs/app-requirements.md.
 2. Read docs/harness-requirements.md.
 3. Read docs/guardrails.md.
-4. Identify the target Python file.
-5. Search the TaskFlow knowledge base for related concepts and components.
+4. Read the requested Python file.
+5. Search the Obsidian knowledge base using taskflow-vault MCP search_notes.
 
-Use the taskflow-vault MCP server when available.
+Use relevant searches such as Task Service, Task Repository, SQLite or MCP.
 
-Call search_notes with relevant queries such as:
-- Task
-- Task Service
-- Task Repository
-- MCP
-- Agent Harness
-
-If MCP is unavailable, report the limitation. Do not invent information from the knowledge base.
+If MCP is unavailable, report this limitation.
 
 ## Review procedure
 
 ### Step 1. Understand the component
 
-Identify:
-- The purpose of the file.
-- Its main functions and classes.
-- Its external dependencies.
-- Its relationship to other TaskFlow components.
+Identify its purpose, functions, dependencies and related TaskFlow components.
 
 ### Step 2. Check correctness
 
-Look for:
-- Incorrect conditions.
-- Missing input validation.
-- Unhandled exceptions.
-- Incorrect return values.
+Inspect:
+- Input validation.
+- Exception handling.
+- Return values.
+- File operations.
+- Database operations.
 - Potential data loss.
-- Incorrect path handling.
 
 ### Step 3. Check security
 
-Look for:
-- Dangerous subprocess commands.
-- Unsafe file operations.
+Inspect:
+- Unsafe shell commands.
 - Path traversal.
-- Unrestricted write access.
-- Accidental exposure of credentials.
-- Missing validation of external inputs.
+- Unrestricted file access.
+- Secrets exposure.
+- Missing permission checks.
 
 ### Step 4. Check architecture
 
-Compare the code with the TaskFlow requirements and knowledge base.
+Compare the implementation with project requirements and relevant Obsidian notes.
 
-Identify inconsistencies between the implementation and documented architecture.
-
-Do not treat planned components as already implemented.
+Distinguish implemented features from planned features.
 
 ### Step 5. Check guardrails
 
-Check the relevant rules in docs/guardrails.md.
+Verify compliance with docs/guardrails.md.
 
-Pay particular attention to:
-- W-01: modifications to connector/server.py require approval.
-- W-02: writing notes to Obsidian requires approval.
+Pay attention to:
+- W-01: changes to connector/server.py require approval.
+- W-02: Obsidian writes require approval.
 - W-03: Git push requires approval.
 - B-01: force push is prohibited.
 - B-02: deletion of architecture decisions is prohibited.
-- B-03: recursive deletion of repositories is prohibited.
-
-Do not perform prohibited operations.
+- B-03: recursive repository deletion is prohibited.
 
 ### Step 6. Check tests
 
-Identify which functions are covered by tests.
+Inspect existing tests and run safe tests when appropriate.
 
-If appropriate, run existing automated tests without modifying project files.
+Never invent test results.
 
-Do not claim that tests passed unless they were actually executed.
+### Step 7. Prepare report
 
-### Step 7. Prepare the report
-
-Return the review in the following format.
+Use this structure:
 
 ## Code Review Result
 
-File: path to reviewed file
+File: reviewed file path
 
 ### Summary
-
-Briefly describe the purpose and overall assessment.
+Purpose and overall assessment.
 
 ### Findings
-
-For each confirmed issue provide:
-- Severity: Critical, High, Medium, or Low.
-- Location: function and line number when available.
-- Problem: what is wrong.
-- Impact: why it matters.
-- Recommendation: how to fix it.
+For each issue provide severity, location, problem, impact and recommendation.
 
 ### Guardrails Compliance
-
-State which rules are relevant and whether violations were found.
+Relevant rules and detected violations.
 
 ### Test Results
-
-List tests actually executed and their results.
+Tests actually executed and their results.
 
 ### Recommendations
-
-Provide a short prioritized list of improvements.
-
-If no confirmed issues are found, say so clearly.
+Prioritized improvements.
 
 ## Restrictions
 
-- Do not edit source files during review.
-- Do not create Git commits.
-- Do not perform Git push.
+- Do not modify project files.
 - Do not modify Obsidian notes.
-- Do not invent test results.
-- Follow the project guardrails.
+- Do not create commits or push changes.
+- Do not execute destructive commands.
+- Follow existing TaskFlow guardrails.
 - Report missing context instead of guessing.

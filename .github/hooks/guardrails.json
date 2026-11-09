@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "python3 .github/hooks/pre_tool_guardrail.py",
+        "powershell": "py -3.14 .github/hooks/pre_tool_guardrail.py",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

@@ -1,5 +1,8 @@
+import logging
 import re
 import subprocess
+import sys
+from contextlib import redirect_stdout
 from datetime import date
 from pathlib import Path
 from mcp.server import MCPServer
@@ -17,48 +20,26 @@ def ping() -> str:
 
 @mcp.tool()
 def search_notes(query: str) -> str:
-    """Шукати нотатки в Obsidian vault за назвою або вмістом."""
+    """Шукати релевантні фрагменти нотаток через векторний індекс."""
 
-    query = query.strip().casefold()
+    query = query.strip()
 
     if not query:
         return "Помилка: порожній пошуковий запит."
 
-    if not VAULT_PATH.is_dir():
-        return f"Vault не знайдено: {VAULT_PATH}"
+    try:
+        with redirect_stdout(sys.stderr):
+            if __package__:
+                from .rag_index import semantic_search
+            else:
+                from rag_index import semantic_search
 
-    results = []
-
-    for path in VAULT_PATH.rglob("*.md"):
-        relative_path = path.relative_to(VAULT_PATH)
-
-        if any(part.startswith(".") for part in relative_path.parts):
-            continue
-
-        content = path.read_text(encoding="utf-8")
-
-        if query in path.stem.casefold() or query in content.casefold():
-            score = content.casefold().count(query)
-
-            if query in path.stem.casefold():
-                score += 10
-
-            results.append((score, relative_path.as_posix(), content))
-
-    if not results:
-        return f"За запитом '{query}' нотаток не знайдено."
-
-    results.sort(key=lambda item: (-item[0], item[1]))
-
-    output = []
-
-    for score, filename, content in results[:5]:
-        output.append(
-            f"Файл: {filename}\n"
-            f"Вміст:\n{content[:2000]}"
+            return semantic_search(query)
+    except Exception as error:
+        logging.getLogger(__name__).exception(
+            "Semantic search failed"
         )
-
-    return "\n\n".join(output)
+        return f"Помилка векторного пошуку: {error}"
 
 
 NOTE_FOLDERS = {
